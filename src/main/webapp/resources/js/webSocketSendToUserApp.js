@@ -1,5 +1,5 @@
 function connect() {
-    var socket = new WebSocket('ws://192.168.1.21:6969/greeting');
+    var socket = new WebSocket('ws://192.168.1.21:6969/gateway');
     ws = Stomp.over(socket);
 
     ws.connect({}, function(frame) {
