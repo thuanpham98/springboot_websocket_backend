@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.server.support.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +14,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
  
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new MyTextWebSocketHandler(), "/gateway");
+        registry.addHandler(new MyTextWebSocketHandler(), "/mobile_gateway");
+        registry.addHandler(new MyTextWebSocketHandler(), "/device_gateway");
+        registry.addHandler(new MyBinaryWebSocketHandler(), "/binary_gateway");
     }
 }

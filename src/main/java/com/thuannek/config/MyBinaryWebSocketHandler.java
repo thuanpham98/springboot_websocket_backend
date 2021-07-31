@@ -2,22 +2,37 @@ package com.thuannek.config;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.ResourceBundle.Control;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.websocket.Decoder.Binary;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import org.springframework.http.HttpHeaders;
 import java.net.InetSocketAddress;
 
-// import com.thuannek.config.*;
+// test 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-public class MyTextWebSocketHandler extends TextWebSocketHandler {
+
+public class MyBinaryWebSocketHandler extends BinaryWebSocketHandler{
     private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-    private static final Logger logger = LoggerFactory.getLogger(MyTextWebSocketHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyBinaryWebSocketHandler.class);
+
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -42,12 +57,12 @@ public class MyTextWebSocketHandler extends TextWebSocketHandler {
     }
  
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        super.handleTextMessage(session, message);
+    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage  message) throws Exception {
+        super.handleBinaryMessage(session, message);
         System.out.println(ControllerSession.getSessions().size());
-        sessions.forEach(webSocketSession -> {
+        ControllerSession.getSessions().forEach(webSocketSession -> {
             try {
-                System.out.println(message);
+                System.out.println(message.getPayload().get(4));
                 webSocketSession.sendMessage(message);
             } catch (IOException e) {
                 System.out.println(e);
