@@ -7,6 +7,8 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thuannek.handler.auth.*;
+
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
@@ -14,8 +16,14 @@ public class WebSocketConfig implements WebSocketConfigurer {
  
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new MyTextWebSocketHandler(), "/mobile_gateway");
-        registry.addHandler(new MyTextWebSocketHandler(), "/device_gateway");
-        registry.addHandler(new MyBinaryWebSocketHandler(), "/binary_gateway");
+        registry.addHandler(new AuthHandler(), "/authentication");
+        // registry.addHandler(new StorageHandler(), "/storage");
+        // registry.addHandler(new DatabaseHandler(), "/database");
+        // registry.addHandler(new DeviceHandler(), "/device");
     }
 }
+
+// #Author gate way : manage sesion token
+// #Storage gate way : for store file , binary chanel
+// #database gate way : for handle data in data base
+// #device gate way : for device connected 

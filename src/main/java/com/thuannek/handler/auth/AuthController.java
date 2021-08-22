@@ -1,21 +1,21 @@
-package com.thuannek.config;
+package com.thuannek.handler.auth;
 
 import org.springframework.web.socket.WebSocketSession;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ControllerSession {
+public class AuthController {
     private static List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 
-    public synchronized static List<WebSocketSession> getSessions() {
+    public synchronized static List<WebSocketSession> getSessions(){
         return sessions;
     }
 
-    public synchronized static void setSessions(WebSocketSession session){
+    public synchronized static void addSession(WebSocketSession session){
         sessions.add(session);
     }
 
-    public synchronized static void removeSessions(WebSocketSession session){
+    public synchronized static void removeSession(WebSocketSession session){
         sessions.remove(session);
     }
 }
