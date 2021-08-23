@@ -1,7 +1,7 @@
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
+!*s*/src/main/**/target/
 !**/src/test/**/target/
 
 ### STS ###
@@ -15,8 +15,8 @@ target/
 
 ### IntelliJ IDEA ###
 .idea
-*.iws
-*.iml
+**.iws
+/*.iml
 *.ipr
 
 ### NetBeans ###
@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/java/com/thuannek/resources/
