@@ -11,8 +11,11 @@ import com.google.firebase.FirebaseOptions;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.boot.autoconfigure.*;
+
 @SpringBootApplication
-@EnableScheduling
+@EnableJpaRepositories(basePackages = "com.thuannek.repositorys")
 public class App extends SpringBootServletInitializer  {
     public static void main(String[] args) throws IOException {
 

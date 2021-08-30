@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.thuannek.handler.auth.*;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableWebSocket

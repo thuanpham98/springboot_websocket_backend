@@ -13,6 +13,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.http.HttpHeaders;
 import java.net.InetSocketAddress;
 
+import com.google.cloud.storage.Acl.User;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -30,27 +31,44 @@ import java.io.IOException;
 // import org.springframework.boot.security.*;
 
 import com.thuannek.handler.auth.AuthController;
-
+import com.thuannek.models.UserModel;
 import com.thuannek.util.JwtUtil;
 
+import com.thuannek.repositorys.UserRepository;
+
+import org.springframework.stereotype.Service;
+
+import com.thuannek.controllers.UserController;
+
+// @Service
 public class AuthHandler extends TextWebSocketHandler{
     private final List<WebSocketSession> sessionsAuth = new CopyOnWriteArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(AuthHandler.class);
     private JwtUtil jwtUtil = new JwtUtil();
+    private UserController controller  = new UserController();
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception, IllegalArgumentException {
         try {
+
             String idToken = session.getHandshakeHeaders().get("id_token").get(0);
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdTokenAsync(idToken).get();
             logger.info("Accepted connection from: {}", decodedToken.getEmail());
-        
+            
             AuthController.addSession(session);
             sessionsAuth.add(session);
             
             String jwtreturn = jwtUtil.generateToken(decodedToken.getEmail());
-            // logger.info(jwtreturn);
-
+            
+            UserModel user = new UserModel(
+                decodedToken.getName(),
+                decodedToken.getUid(),
+                decodedToken.getEmail(),
+                jwtreturn
+            );
+            
+            controller.createUser(user);
+            
             session.sendMessage(new TextMessage(jwtreturn));
 
         }catch (Exception e ){
@@ -82,7 +100,6 @@ public class AuthHandler extends TextWebSocketHandler{
                     logger.info("Accepted connection from: {}", decodedToken.getEmail());
                     
                     String jwtreturn = jwtUtil.generateToken(decodedToken.getEmail());
-                    // logger.info(jwtreturn);
         
                     session.sendMessage(new TextMessage(jwtreturn));
         

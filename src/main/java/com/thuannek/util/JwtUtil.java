@@ -15,7 +15,7 @@ public class JwtUtil {
         Date now = new Date() ;
         return Jwts.builder().setSubject(userKey)
                              .setIssuedAt(now)
-                             .setExpiration(new Date(now.getTime() + 10000L))
+                             .setExpiration(new Date(now.getTime() + 3600000L))
                              .signWith(SignatureAlgorithm.HS512, skey)
                              .compact();
     }
