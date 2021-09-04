@@ -8,12 +8,15 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 // import com.fasterxml.jackson.core.sym.Name;
-import org.springframework.stereotype.Service;
+// import org.springframework.stereotype.Service;
+
+// import org.springframework.beans.factory.annotation.*;
 
 @Entity // This tells Hibernate to make a table out of this class
 @Table(name = "users")
 public class UserModel {
-    
+
+
     @Column(name = "user_id", nullable = false)
     private String userId;
 
@@ -27,6 +30,10 @@ public class UserModel {
     private String tokeString;
 
     public UserModel(){
+        this.email="";
+        this.tokeString="";
+        this.name="";
+        this.userId="";
 
     }
 
@@ -54,7 +61,6 @@ public class UserModel {
         this.userId = userId;
     }
 
-    
     public String getUserEmail(){
         return this.email;
     }
@@ -64,7 +70,7 @@ public class UserModel {
     }
 
     
-    public String getUserName(String name){
+    public String getUserName(){
         return this.name;
     }
 
@@ -78,6 +84,17 @@ public class UserModel {
 
     public void setUserToken(String token){
         this.tokeString = token;
+    }
+
+    @Override
+    public Object clone(){
+        UserModel model = null;
+        try {
+            model = (UserModel) super.clone();
+        } catch (CloneNotSupportedException e) {
+            model = new UserModel(this.name,this.userId,this.email,this.tokeString);
+        }
+        return model;
     }
 
     @Override

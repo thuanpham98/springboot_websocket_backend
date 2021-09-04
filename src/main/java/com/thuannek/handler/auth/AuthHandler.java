@@ -38,6 +38,7 @@ import com.thuannek.repositorys.UserRepository;
 
 import org.springframework.stereotype.Service;
 
+import com.thuannek.controllers.InterfacePostgresController;
 import com.thuannek.controllers.UserController;
 
 // @Service
@@ -45,7 +46,6 @@ public class AuthHandler extends TextWebSocketHandler{
     private final List<WebSocketSession> sessionsAuth = new CopyOnWriteArrayList<>();
     private static final Logger logger = LoggerFactory.getLogger(AuthHandler.class);
     private JwtUtil jwtUtil = new JwtUtil();
-    private UserController controller  = new UserController();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception, IllegalArgumentException {
@@ -59,16 +59,15 @@ public class AuthHandler extends TextWebSocketHandler{
             sessionsAuth.add(session);
             
             String jwtreturn = jwtUtil.generateToken(decodedToken.getEmail());
-            
+
             UserModel user = new UserModel(
                 decodedToken.getName(),
                 decodedToken.getUid(),
                 decodedToken.getEmail(),
                 jwtreturn
             );
-            
-            controller.createUser(user);
-            
+            InterfacePostgresController.userController.createOrUpdateUser(user);
+
             session.sendMessage(new TextMessage(jwtreturn));
 
         }catch (Exception e ){
@@ -80,6 +79,17 @@ public class AuthHandler extends TextWebSocketHandler{
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        String idToken = session.getHandshakeHeaders().get("id_token").get(0);
+        FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdTokenAsync(idToken).get();
+
+        UserModel user = new UserModel(
+            decodedToken.getName(),
+            decodedToken.getUid(),
+            decodedToken.getEmail(),
+            ""
+        );
+        InterfacePostgresController.userController.createOrUpdateUser(user);
+
         System.out.println("disconnect from " + session.getId());
         AuthController.removeSession(session);
         sessionsAuth.remove(session);
@@ -87,19 +97,29 @@ public class AuthHandler extends TextWebSocketHandler{
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception,IllegalArgumentException,IOException {
         super.handleTextMessage(session, message);
         try {
             int retError = jwtUtil.validateJwtToken(message.getPayload());
             if( retError == 0 ){
+                logger.info("JWT is ok");
                 session.sendMessage(new TextMessage("ok"));
             }else if (retError ==1 ){
+                logger.info("JWT is expire time");
                 try {
                     String idToken = session.getHandshakeHeaders().get("id_token").get(0);
                     FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdTokenAsync(idToken).get();
                     logger.info("Accepted connection from: {}", decodedToken.getEmail());
                     
                     String jwtreturn = jwtUtil.generateToken(decodedToken.getEmail());
+
+                    UserModel user = new UserModel(
+                        decodedToken.getName(),
+                        decodedToken.getUid(),
+                        decodedToken.getEmail(),
+                        jwtreturn
+                    );
+                    InterfacePostgresController.userController.createOrUpdateUser(user);
         
                     session.sendMessage(new TextMessage(jwtreturn));
         
