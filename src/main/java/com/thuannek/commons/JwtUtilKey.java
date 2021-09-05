@@ -1,4 +1,4 @@
-package com.thuannek.constants;
+package com.thuannek.commons;
 
 public enum JwtUtilKey {
     SECRET_KEY("thuanthuan");

@@ -8,9 +8,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.thuannek.controllers.InterfacePostgresController;
-import com.thuannek.controllers.UserController;
-import com.thuannek.repositorys.UserRepository;
+import com.thuannek.commons.AppCommons;
+
+import com.thuannek.services.user.UserRepository;
+import com.thuannek.services.user.UserService;
+import com.thuannek.util.AppDI;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,10 +22,11 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import org.springframework.context.ApplicationContext;
+import com.thuannek.commons.AppCommons;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "com.thuannek.repositorys")  
-@EntityScan(basePackages ={ "com.thuannek.models"})
+@EnableJpaRepositories(basePackages = {"com.thuannek.services.*"})  
+@EntityScan(basePackages ={"com.thuannek.services.*"})
 public class App extends SpringBootServletInitializer  {
     public static void main(String[] args) throws IOException {
 
@@ -42,11 +45,10 @@ public class App extends SpringBootServletInitializer  {
 
         // start server
         System.out.println("start websocket server");
-        ApplicationContext context = SpringApplication.run(App.class, args);
-
-        // make DI for database interface
-        UserRepository  userRepository = context.getBean(UserRepository.class);
-        InterfacePostgresController.userController = new UserController(userRepository);
-        
+        // ApplicationContext applicationContext = SpringApplication.run(App.class, args);
+        AppDI.appInstance = new AppCommons(SpringApplication.run(App.class, args));
+        // AppCommons.context = SpringApplication.run(App.class, args);
+        // UserRepository userRepository = AppDI.appInstance.getAppContext().getBean(UserRepository.class);
+        AppDI.appInstance.setUserService(new UserService(AppDI.appInstance.getAppContext().getBean(UserRepository.class)));
     }
 }

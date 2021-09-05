@@ -1,4 +1,4 @@
-package com.thuannek.models;
+package com.thuannek.services.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,14 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-// import com.fasterxml.jackson.core.sym.Name;
-// import org.springframework.stereotype.Service;
-
-// import org.springframework.beans.factory.annotation.*;
-
 @Entity // This tells Hibernate to make a table out of this class
 @Table(name = "users")
-public class UserModel {
+public class UserEntity {
 
 
     @Column(name = "user_id", nullable = false)
@@ -29,15 +24,14 @@ public class UserModel {
     @Column(name = "user_token", nullable = false)
     private String tokeString;
 
-    public UserModel(){
+    public UserEntity(){
         this.email="";
         this.tokeString="";
         this.name="";
         this.userId="";
-
     }
 
-    public UserModel(String name, String userId , String email , String tokeString){
+    public UserEntity(String name, String userId , String email , String tokeString){
         this.name = name;
         this.userId = userId;
         this.email = email;
@@ -53,33 +47,16 @@ public class UserModel {
         return this.id;
     }
 
-    public String getUserId(){
-        return this.userId;
-    }
-
     public void setUserId(String userId){
         this.userId = userId;
-    }
-
-    public String getUserEmail(){
-        return this.email;
     }
 
     public void setUserEmail(String email){
         this.email = email;
     }
 
-    
-    public String getUserName(){
-        return this.name;
-    }
-
     public void setUserName(String name){
         this.name= name;
-    }
-
-    public String getUserToken(){
-        return this.tokeString;
     }
 
     public void setUserToken(String token){
@@ -87,19 +64,23 @@ public class UserModel {
     }
 
     @Override
-    public Object clone(){
-        UserModel model = null;
-        try {
-            model = (UserModel) super.clone();
-        } catch (CloneNotSupportedException e) {
-            model = new UserModel(this.name,this.userId,this.email,this.tokeString);
-        }
-        return model;
+    public String toString(){
+        return ("User :  email = " + email.toString());
     }
 
-    @Override
-    public String toString(){
-        return ("User email = " + email.toString());
+    public UserModel toUserModel(){
+        return new UserModel(
+            this.name,
+            this.userId,
+            this.email,
+            this.tokeString
+        );
+    }
+
+    public void fromUserModel(UserModel model){
+        this.email = model.getUserEmail();
+        this.name = model.getUserName();
+        this.tokeString = model.getUserToken();
     }
 
 }

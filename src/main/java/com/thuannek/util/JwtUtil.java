@@ -1,8 +1,9 @@
 package com.thuannek.util;
 
-import com.thuannek.constants.JwtUtilKey;
-
 import java.util.Date;
+
+import com.thuannek.commons.JwtUtilKey;
+
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

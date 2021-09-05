@@ -1,13 +1,14 @@
-package com.thuannek.repositorys;
+package com.thuannek.services.user;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.thuannek.models.UserModel;
+import com.thuannek.services.user.UserEntity;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserModel, Long>{
+public interface UserRepository extends JpaRepository<UserEntity, Long>{
     
     @Query(value = "SELECT * FROM users WHERE user_email = ?1", nativeQuery = true)
-    UserModel findbyEmail(String email);
+    UserEntity findbyEmail(String email);
 }

@@ -31,15 +31,13 @@ import java.io.IOException;
 // import org.springframework.boot.security.*;
 
 import com.thuannek.handler.auth.AuthController;
-import com.thuannek.models.UserModel;
+import com.thuannek.util.AppDI;
 import com.thuannek.util.JwtUtil;
-
-import com.thuannek.repositorys.UserRepository;
 
 import org.springframework.stereotype.Service;
 
-import com.thuannek.controllers.InterfacePostgresController;
-import com.thuannek.controllers.UserController;
+import com.thuannek.commons.AppCommons;
+import com.thuannek.services.user.UserEntity;
 
 // @Service
 public class AuthHandler extends TextWebSocketHandler{
@@ -60,13 +58,14 @@ public class AuthHandler extends TextWebSocketHandler{
             
             String jwtreturn = jwtUtil.generateToken(decodedToken.getEmail());
 
-            UserModel user = new UserModel(
+            UserEntity user = new UserEntity(
                 decodedToken.getName(),
                 decodedToken.getUid(),
                 decodedToken.getEmail(),
                 jwtreturn
             );
-            InterfacePostgresController.userController.createOrUpdateUser(user);
+            AppDI.appInstance.getUserService().createOrUpdateUser(user);
+            // AppDI.appInstance..createOrUpdateUser(user);
 
             session.sendMessage(new TextMessage(jwtreturn));
 
@@ -82,13 +81,13 @@ public class AuthHandler extends TextWebSocketHandler{
         String idToken = session.getHandshakeHeaders().get("id_token").get(0);
         FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdTokenAsync(idToken).get();
 
-        UserModel user = new UserModel(
+        UserEntity user = new UserEntity(
             decodedToken.getName(),
             decodedToken.getUid(),
             decodedToken.getEmail(),
             ""
         );
-        InterfacePostgresController.userController.createOrUpdateUser(user);
+        AppDI.appInstance.getUserService().createOrUpdateUser(user);
 
         System.out.println("disconnect from " + session.getId());
         AuthController.removeSession(session);
@@ -113,13 +112,13 @@ public class AuthHandler extends TextWebSocketHandler{
                     
                     String jwtreturn = jwtUtil.generateToken(decodedToken.getEmail());
 
-                    UserModel user = new UserModel(
+                    UserEntity user = new UserEntity(
                         decodedToken.getName(),
                         decodedToken.getUid(),
                         decodedToken.getEmail(),
                         jwtreturn
                     );
-                    InterfacePostgresController.userController.createOrUpdateUser(user);
+                    AppDI.appInstance.getUserService().createOrUpdateUser(user);
         
                     session.sendMessage(new TextMessage(jwtreturn));
         
