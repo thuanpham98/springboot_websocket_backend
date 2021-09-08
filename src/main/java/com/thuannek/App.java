@@ -8,11 +8,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.thuannek.commons.AppCommons;
-
+import com.thuannek.commons.AppServices;
+import com.thuannek.services.project.ProjectRepository;
+import com.thuannek.services.project.ProjectService;
 import com.thuannek.services.user.UserRepository;
 import com.thuannek.services.user.UserService;
-import com.thuannek.util.AppDI;
+import com.thuannek.util.GetIt;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,11 +23,11 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import org.springframework.context.ApplicationContext;
-import com.thuannek.commons.AppCommons;
+import com.thuannek.commons.AppServices;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = {"com.thuannek.services.*"})  
-@EntityScan(basePackages ={"com.thuannek.services.*"})
+@EnableJpaRepositories(basePackages = {"com.thuannek.services.user","com.thuannek.services.project"})  
+@EntityScan(basePackages ={"com.thuannek.services.user","com.thuannek.services.project"})
 public class App extends SpringBootServletInitializer  {
     public static void main(String[] args) throws IOException {
 
@@ -45,10 +46,9 @@ public class App extends SpringBootServletInitializer  {
 
         // start server
         System.out.println("start websocket server");
-        // ApplicationContext applicationContext = SpringApplication.run(App.class, args);
-        AppDI.appInstance = new AppCommons(SpringApplication.run(App.class, args));
-        // AppCommons.context = SpringApplication.run(App.class, args);
-        // UserRepository userRepository = AppDI.appInstance.getAppContext().getBean(UserRepository.class);
-        AppDI.appInstance.setUserService(new UserService(AppDI.appInstance.getAppContext().getBean(UserRepository.class)));
+        GetIt.appServices = new AppServices(SpringApplication.run(App.class, args));
+
+        GetIt.appServices.setUserService(new UserService(GetIt.appServices.getAppContext().getBean(UserRepository.class)));
+        GetIt.appServices.setProjectService(new ProjectService(GetIt.appServices.getAppContext().getBean(ProjectRepository.class)));
     }
 }
