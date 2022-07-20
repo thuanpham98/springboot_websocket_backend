@@ -36,8 +36,8 @@ public class App extends SpringBootServletInitializer  {
         @SuppressWarnings("deprecation")
         FirebaseOptions options = new FirebaseOptions.Builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-            .setDatabaseUrl("https://iotcore-208310.firebaseio.com")
-            .setProjectId("iotcore-208310")
+            .setDatabaseUrl("")
+            .setProjectId("")
             .build();
         
         // init firebase
